@@ -61,42 +61,47 @@ export default class Tree {
     deleteRecur(root, value) {
         if (root === null) return root;
 
+        // Travel down the tree to find the node
         if (value < root.data) {
             root.left = this.deleteRecur(root.left, value);
             return root;
-        } else if (value > root.data) {
+        }
+
+        if (value > root.data) {
             root.right = this.deleteRecur(root.right, value);
             return root;
         }
 
+        // Found the node, now find the successor
+        // The only child replace the node to be deleted if any
         if (root.left === null) return root.right;
-        else if (root.right === null) return root.left;
-        else {
-            let succParent = root;
-            let succ = root.right;
+        if (root.right === null) return root.left;
 
-            while (succ.left !== null) {
-                succParent = succ;
-                succ = succ.left;
-            }
+        // Successor is always the smallest in the right child tree
+        let succParent = root;
+        let succ = root.right;
 
-            if (succParent !== root) succParent.left = succ.right;
-            else succParent.right = succ.right;
-
-            root.data = succ.data;
-            return root;
+        // Smallest is on the left side of the tree
+        while (succ.left !== null) {
+            succParent = succ;
+            succ = succ.left;
         }
+
+        // If successor is not the child of the node to be deleted
+        // Connect the successor child to the successor parent
+        if (succParent !== root) succParent.left = succ.right;
+        else succParent.right = succ.right;
+
+        // Copy the successor data into the node to be deleted
+        root.data = succ.data;
+        return root;
     }
 
-    find(value) {
-        return this.findRecur(this.root, value);
-    }
-
-    findRecur(root, value) {
+    find(value, root = this.root) {
         if (root === null) return "No node found";
         if (root.data === value) return root;
-        if (value < root.data) return this.findRecur(root.left, value);
-        else return this.findRecur(root.right, value);
+        if (value < root.data) return this.find(value, root.left);
+        return this.find(value, root.right);
     }
 
     levelOrder(callback) {
