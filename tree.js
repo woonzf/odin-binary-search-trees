@@ -104,7 +104,106 @@ export default class Tree {
         return this.find(value, root.right);
     }
 
-    levelOrder(callback) {
+    // Breadth-first
+    levelOrder(root = this.root, order = [], queue = []) {
+        if (root === null) return order;
+
+        order.push(root.data);
         
+        if (queue.length !== 0) queue.shift();
+        if (root.left !== null) queue.push(root.left);
+        if (root.right !== null) queue.push(root.right);
+        if (queue.length === 0) return order;
+
+        return this.levelOrder(queue[0], order, queue);
+    }
+
+    // Left, Root, Right
+    inOrder(root = this.root, order = []) {
+        if (root === null) return order;
+
+        this.inOrder(root.left, order);
+        order.push(root.data);
+        this.inOrder(root.right, order);
+        
+        return order;
+    }
+
+    // Root, Left, Right
+    preOrder(root = this.root, order = []) {
+        if (root === null) return order;
+
+        order.push(root.data);
+        this.preOrder(root.left, order);
+        this.preOrder(root.right, order);
+
+        return order;
+    }
+
+    // Left, Right, Root
+    postOrder(root = this.root, order = []) {
+        if (root === null) return order;
+
+        this.postOrder(root.left, order);
+        this.postOrder(root.right, order);
+        order.push(root.data);
+
+        return order;
+    }
+
+    // Microsoft Copilot
+    // Prompt: Show me how to find the height of a binary search tree
+    findHeight(root = this.root) {
+        if (root === null) return -1;
+        
+        // Find height from both child
+        let heightL = this.findHeight(root.left);
+        let heightR = this.findHeight(root.right);
+
+        // Return the bigger value
+        return Math.max(heightL, heightR) + 1;
+    }
+
+    // Prompt: How about finding the height of a node
+    height(node, root = this.root) {
+        if (root === null) return -1;
+
+        // Found the node and return the height
+        if (node === root.data) return this.findHeight(root);
+
+        // Check through each tree to find the correct node
+        return Math.max(this.height(node, root.left), this.height(node, root.right));
+    }
+
+    depth(node, root = this.root, depth = 0) {
+        if (root === null) return -1;
+        if (node < root.data) depth = this.depth(node, root.left, depth + 1);
+        if (node > root.data) depth = this.depth(node, root.right, depth + 1);
+        return depth;
+    }
+
+    isBalanced() {
+        if (this.isBalancedInt() < 0) return false;
+        return true;
+    }
+
+    // Microsoft Copilot
+    // Prompt: How to check if a tree is balanced ?
+    isBalancedInt(root = this.root) {
+        if (root === null) return 0;
+
+        let heightL = this.isBalancedInt(root.left);
+        if (heightL === -1) return -1;
+
+        let heightR = this.isBalancedInt(root.right);
+        if (heightR === -1) return -1;
+
+        if (Math.abs(heightL - heightR) > 1) return -1;
+
+        return 1 + Math.max(heightL, heightR);
+    }
+
+    rebalance() {
+        this.root = this.buildTree(this.inOrder());
     }
 }

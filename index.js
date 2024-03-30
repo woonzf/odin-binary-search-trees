@@ -1,12 +1,32 @@
 import Tree from "./tree.js";
 import prettyPrint from "./pretty-print.js";
 
-const data = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-const tree = new Tree(data);
+// Driver
+const driver = (() => {
+    function run() {
+        const tree = new Tree(_createRandomArray(10, 100));
 
-prettyPrint(tree.root);
-tree.insert(100);
-prettyPrint(tree.root);
-tree.deleteItem(8);
-prettyPrint(tree.root);
-console.log(tree.find(324));
+        console.log(tree.isBalanced())
+        console.log(tree.levelOrder(), tree.preOrder(), tree.postOrder(), tree.inOrder())
+
+        tree.insert(200);
+        tree.insert(300);
+        tree.insert(400);
+        console.log(tree.isBalanced())
+
+        tree.rebalance();
+        console.log(tree.isBalanced())
+        console.log(tree.levelOrder(), tree.preOrder(), tree.postOrder(), tree.inOrder())
+
+        prettyPrint(tree.root);
+    }
+
+    // https://stackoverflow.com/questions/5836833/create-an-array-with-random-values
+    function _createRandomArray(size, max) {
+        return Array.from({length: size}, () => Math.floor(Math.random() * max));
+    }
+
+    return { run };
+})()
+
+driver.run();
